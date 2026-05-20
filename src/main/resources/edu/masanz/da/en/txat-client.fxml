@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.masanz.da.en.TxatClientController">
+    <top>
+        <VBox spacing="8.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="8.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+            <HBox spacing="8.0">
+                <Label text="IP" />
+                <TextField fx:id="hostTextField" text="172.20.22.100" HBox.hgrow="ALWAYS" />
+                <Label text="Puerto" />
+                <TextField fx:id="portTextField" prefWidth="90.0" text="12345" />
+                <Label text="Nombre" />
+                <TextField fx:id="nameTextField" onAction="#handleConnectionButton" prefWidth="130.0" />
+                <Button fx:id="connectionButton" onAction="#handleConnectionButton" text="Conectar" />
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <VBox spacing="8.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="8.0" left="10.0" right="10.0" top="0.0" />
+            </padding>
+            <TextArea fx:id="messagesTextArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS">
+            <font>
+               <Font name="Courier New" size="12.0" />
+            </font></TextArea>
+        </VBox>
+    </center>
+    <bottom>
+        <VBox spacing="8.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="0.0" />
+            </padding>
+            <HBox spacing="8.0">
+                <TextField fx:id="messageTextField" onAction="#handleMessageAction" promptText="Escribe un mensaje" HBox.hgrow="ALWAYS" />
+                <Button fx:id="sendButton" onAction="#handleSendButton" text="Enviar" />
+            </HBox>
+        </VBox>
+    </bottom>
+</BorderPane>

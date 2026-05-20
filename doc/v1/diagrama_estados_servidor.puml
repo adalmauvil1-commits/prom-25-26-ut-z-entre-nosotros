@@ -1,0 +1,31 @@
+@startuml
+title Diagrama de estados - TxatServer v1
+
+
+state "Modo servidor" as ModoServidor {
+  [*] --> IniciandoServidor
+  IniciandoServidor --> EsperandoClientes : ServerSocket abierto en puerto 12345
+  IniciandoServidor --> ErrorServidor : IOException
+
+  EsperandoClientes --> CreandoHiloCliente : aceptar conexion
+  CreandoHiloCliente --> EsperandoClientes : iniciar TxatClientHandler
+
+  ErrorServidor --> [*] : mostrar traza
+}
+
+state "TxatClientHandler por cliente" as Handler {
+  [*] --> RegistrandoCliente : socket aceptado
+  RegistrandoCliente --> EsperandoMensaje : anadir PrintWriter a clientWriters
+
+  EsperandoMensaje --> DifundiendoMensaje : llega linea del cliente
+  DifundiendoMensaje --> EsperandoMensaje : reenviar a todos los clientes
+
+  EsperandoMensaje --> CerrandoConexion : fin de entrada o desconexion
+  DifundiendoMensaje --> CerrandoConexion : error de conexion
+  CerrandoConexion --> [*] : quitar writer y cerrar socket
+}
+
+CreandoHiloCliente --> Handler : nuevo hilo
+
+
+@enduml

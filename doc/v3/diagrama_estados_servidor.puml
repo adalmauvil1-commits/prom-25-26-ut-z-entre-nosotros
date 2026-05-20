@@ -1,0 +1,41 @@
+@startuml
+title Diagrama de estados - Servidor v3
+
+state "TxatServer" as Servidor {
+  [*] --> AbriendoSocket
+  AbriendoSocket --> EsperandoClientes : ServerSocket abierto en puerto 12345
+  AbriendoSocket --> ErrorServidor : IOException
+
+  EsperandoClientes --> CreandoHandler : aceptar conexion
+  CreandoHandler --> EsperandoClientes : iniciar TxatClientHandler
+
+  ErrorServidor --> [*] : mostrar traza
+}
+
+state "TxatClientHandler" as Handler {
+  [*] --> ClienteConectado : socket aceptado
+  ClienteConectado --> CreandoFlujos : abrir entrada y salida
+  CreandoFlujos --> RegistrandoNombre
+
+  RegistrandoNombre --> NombreRechazado : nombre vacio o repetido
+  NombreRechazado --> RegistrandoNombre : enviar "NO" y esperar otro nombre
+
+  RegistrandoNombre --> ChatActivo : nombre valido
+  ChatActivo : guardar nombre en mapaClientsWriters
+  ChatActivo : enviar "OK" al cliente
+
+  ChatActivo --> DifundiendoMensaje : llega mensaje del cliente
+  DifundiendoMensaje : formar "nombre: mensaje"
+  DifundiendoMensaje : reenviar a todos los PrintWriter del mapa
+  DifundiendoMensaje --> ChatActivo
+
+  ChatActivo --> CerrandoConexion : fin de entrada o error
+  RegistrandoNombre --> CerrandoConexion : cliente cierra antes de registrarse
+  NombreRechazado --> CerrandoConexion : cliente cierra conexion
+
+  CerrandoConexion --> [*] : quitar nombre del mapa y cerrar socket
+}
+
+CreandoHandler --> Handler : nuevo hilo
+
+@enduml

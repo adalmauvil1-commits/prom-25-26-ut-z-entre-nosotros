@@ -1,0 +1,27 @@
+@startuml
+title Diagrama de estados - TxatClient v1
+
+state "Modo cliente" as ModoCliente {
+  [*] --> ConectandoServidor
+  ConectandoServidor --> PidiendoNombre : conexion correcta
+  ConectandoServidor --> ErrorConexion : IOException
+
+  PidiendoNombre --> ChatActivo : nombre introducido
+
+  state ChatActivo {
+    [*] --> EsperandoEntradaUsuario
+
+    EsperandoEntradaUsuario --> EnviandoMensaje : usuario escribe linea
+    EnviandoMensaje --> EsperandoEntradaUsuario : enviar "nombre: mensaje"
+
+    EsperandoEntradaUsuario --> MostrandoMensajeRecibido : servidor envia linea
+    MostrandoMensajeRecibido --> EsperandoEntradaUsuario : imprimir mensaje
+  }
+
+  ChatActivo --> FinalizandoCliente : se cierra la entrada o la conexion
+  ErrorConexion --> [*] : mostrar aviso
+  FinalizandoCliente --> [*] : cerrar recursos
+}
+
+
+@enduml

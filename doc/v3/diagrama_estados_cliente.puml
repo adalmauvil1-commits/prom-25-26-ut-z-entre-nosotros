@@ -1,0 +1,32 @@
+@startuml
+title Diagrama de estados - Cliente v3
+
+[*] --> ConectandoServidor : ejecutar TxatClient.main()
+
+state "TxatClient" as Cliente {
+  ConectandoServidor --> SolicitandoNombre : conexion con localhost:12345
+  ConectandoServidor --> ErrorConexion : IOException
+
+  SolicitandoNombre --> EnviandoNombre : usuario escribe nombre
+  EnviandoNombre --> EsperandoRespuestaNombre : enviar nombre al servidor
+
+  EsperandoRespuestaNombre --> ChatActivo : recibe "OK"
+  EsperandoRespuestaNombre --> NombreRechazado : recibe otra respuesta o "NO"
+  NombreRechazado --> SolicitandoNombre : mostrar aviso y pedir otro nombre
+
+  state ChatActivo {
+    [*] --> EsperandoEntradaUsuario
+
+    EsperandoEntradaUsuario --> EnviandoMensaje : usuario escribe linea
+    EnviandoMensaje --> EsperandoEntradaUsuario : enviar mensaje sin prefijo
+
+    EsperandoEntradaUsuario --> MostrandoMensajeRecibido : servidor envia linea
+    MostrandoMensajeRecibido --> EsperandoEntradaUsuario : imprimir mensaje
+  }
+
+  ChatActivo --> FinalizandoCliente : se cierra entrada o conexion
+  ErrorConexion --> [*] : mostrar aviso
+  FinalizandoCliente --> [*] : cerrar socket y flujos
+}
+
+@enduml
