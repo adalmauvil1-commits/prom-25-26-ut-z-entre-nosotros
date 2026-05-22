@@ -44,7 +44,7 @@ public class TxatClientHandler extends Thread {
         }
     }
 
-    private void processCommand(String message) {
+    public void processCommand(String message) {
         //   /KILL javi
         //   /MOVE cocina
         //   /MAPA

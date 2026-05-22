@@ -12,11 +12,11 @@ public class TxatClient extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(TxatClient.class.getResource("txat-client.fxml"));
-        Scene scene = new Scene(loader.load(), 720, 480);
+        Scene scene = new Scene(loader.load(), 1073, 528);
         stage.setTitle("Txat v7");
         stage.setScene(scene);
-        stage.setMinWidth(520);
-        stage.setMinHeight(360);
+        stage.setMinWidth(1073);
+        stage.setMinHeight(528);
         stage.show();
     }
 

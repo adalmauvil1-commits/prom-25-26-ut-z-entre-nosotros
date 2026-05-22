@@ -1,18 +1,25 @@
 package edu.masanz.da.en;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.util.Duration;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.Time;
 
 public class TxatClientController {
+
+    private int tiempo = 1;
 
     @FXML
     private TextField hostTextField;
@@ -35,6 +42,18 @@ public class TxatClientController {
     @FXML
     private Button sendButton;
 
+    @FXML
+    private Button pasillo;
+
+    @FXML
+    private Button despensa;
+
+    @FXML
+    private Button dormitorio;
+
+    @FXML
+    private Button cocina;
+
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
@@ -53,6 +72,60 @@ public class TxatClientController {
         } else {
             connect();
         }
+    }
+
+    @FXML
+    private void handleMoveButton(ActionEvent event) {
+
+
+        if (tiempo % 2 == 0){
+            System.out.println("¡¡ESPERA!!, NO PUEDES MOVERTE AUN, QUE ACABAS DE LLEGAR");
+            return;
+        }
+
+        pasillo.setDisable(false);
+        despensa.setDisable(false);
+        dormitorio.setDisable(false);
+        cocina.setDisable(false);
+
+        Button botonElegido = (Button) event.getSource();
+        String idBoton = botonElegido.getText().toLowerCase();
+        String message = null;
+
+        if (idBoton.equalsIgnoreCase("dormitorio")){
+            cocina.setDisable(true);
+            dormitorio.setDisable(true);
+        }
+        if (idBoton.equalsIgnoreCase("cocina")){
+            dormitorio.setDisable(true);
+            cocina.setDisable(true);
+        }
+        if (idBoton.equalsIgnoreCase("despensa")){
+            despensa.setDisable(true);
+        }
+        if (idBoton.equalsIgnoreCase("pasillo")){
+            pasillo.setDisable(true);
+        }
+
+
+        switch (idBoton){
+            case "pasillo":
+                message = "/MOVE pasillo";
+                break;
+            case "dormitorio":
+                message = "/MOVE dormitorio";
+                break;
+            case "despensa":
+                message = "/MOVE despensa";
+                break;
+            case "cocina":
+                message = "/MOVE cocina";
+                break;
+            default:
+                appendMessage("ALGO HA IDO MAL");
+                break;
+        }
+        out.println(message);
     }
 
     @FXML

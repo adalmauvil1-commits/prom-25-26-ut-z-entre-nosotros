@@ -13,7 +13,8 @@ public class GameManager {
     private Map<Sala, List<Jugador>> mapSalasListaJugadores =  new TreeMap<>();
     // MAPA QUIEN VOTA A QUIEN PARA MATAR
     private Map<Jugador, Jugador> mapVotos = new TreeMap<>();
-    private EstadoJuego estadoJuego;
+
+    private EstadoJuego estadoJuego = EstadoJuego.JUGANDO;
 
     private String mapaTextual = """
 [cocina] - [pasillo] - [dormitorio]

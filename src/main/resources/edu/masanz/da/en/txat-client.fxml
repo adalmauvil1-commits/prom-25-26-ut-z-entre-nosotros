@@ -7,46 +7,94 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.masanz.da.en.TxatClientController">
-    <top>
-        <VBox spacing="8.0" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="8.0" left="10.0" right="10.0" top="10.0" />
-            </padding>
+<BorderPane prefHeight="528.0" prefWidth="1073.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.masanz.da.en.TxatClientController">
+   <top>
+      <VBox spacing="8.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="8.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <children>
             <HBox spacing="8.0">
-                <Label text="IP" />
-                <TextField fx:id="hostTextField" text="172.20.22.100" HBox.hgrow="ALWAYS" />
-                <Label text="Puerto" />
-                <TextField fx:id="portTextField" prefWidth="90.0" text="12345" />
-                <Label text="Nombre" />
-                <TextField fx:id="nameTextField" onAction="#handleConnectionButton" prefWidth="130.0" />
-                <Button fx:id="connectionButton" onAction="#handleConnectionButton" text="Conectar" />
+               <children>
+                  <Label text="IP" />
+                  <TextField fx:id="hostTextField" text="172.20.22.49" HBox.hgrow="ALWAYS" />
+                  <Label text="Puerto" />
+                  <TextField fx:id="portTextField" prefWidth="90.0" text="12345" />
+                  <Label text="Nombre" />
+                  <TextField fx:id="nameTextField" prefWidth="130.0" />
+                  <Button fx:id="connectionButton" onAction="#handleConnectionButton" text="Conectar" />
+               </children>
             </HBox>
-        </VBox>
-    </top>
-    <center>
-        <VBox spacing="8.0" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="8.0" left="10.0" right="10.0" top="0.0" />
-            </padding>
-            <TextArea fx:id="messagesTextArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS">
-            <font>
-               <Font name="Courier New" size="12.0" />
-            </font></TextArea>
-        </VBox>
-    </center>
-    <bottom>
-        <VBox spacing="8.0" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="0.0" />
-            </padding>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox prefHeight="450.0" prefWidth="1036.0" spacing="8.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="8.0" left="10.0" right="10.0" top="0.0" />
+         </padding>
+         <children>
+            <HBox prefHeight="448.0" prefWidth="892.0">
+               <children>
+                  <Pane prefHeight="375.0" prefWidth="690.0">
+                     <children>
+                        <Pane accessibleRole="BUTTON" layoutX="201.0" layoutY="274.0" prefHeight="64.0" prefWidth="115.0" style="-fx-background-color: orange; -fx-border-color: black;">
+                           <children>
+                              <Button fx:id="despensa" layoutX="21.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleMoveButton" style="-fx-background-color: maroon; -fx-text-fill: white; -fx-border-color: black;" text="DESPENSA" />
+                           </children>
+                        </Pane>
+                        <Pane accessibleRole="BUTTON" layoutX="388.0" layoutY="103.0" prefHeight="64.0" prefWidth="115.0" style="-fx-background-color: black; -fx-border-color: black;">
+                           <children>
+                              <Button fx:id="dormitorio" layoutX="13.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleMoveButton" style="-fx-background-color: maroon; -fx-text-fill: white; -fx-border-color: black;" text="DORMITORIO" />
+                           </children>
+                        </Pane>
+                        <Pane accessibleRole="BUTTON" layoutX="14.0" layoutY="103.0" prefHeight="64.0" prefWidth="115.0" style="-fx-background-color: green; -fx-border-color: black;">
+                           <children>
+                              <Button fx:id="cocina" layoutX="28.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleMoveButton" style="-fx-background-color: maroon; -fx-text-fill: white; -fx-border-color: black;" text="COCINA" />
+                           </children>
+                        </Pane>
+                        <Pane accessibleRole="BUTTON" layoutX="201.0" layoutY="103.0" prefHeight="64.0" prefWidth="115.0" style="-fx-background-color: blue; -fx-border-color: black;">
+                           <children>
+                              <Button fx:id="pasillo" layoutX="27.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleMoveButton" style="-fx-background-color: maroon; -fx-text-fill: white; -fx-border-color: black;" text="PASILLO" />
+                           </children>
+                        </Pane>
+                        <Line endX="48.0" endY="-47.0" layoutX="153.0" layoutY="182.0" startX="-24.0" startY="-47.0" />
+                        <Line endX="95.5" endY="-25.0" layoutX="163.0" layoutY="192.0" startX="95.5" startY="82.0" />
+                        <Line endX="215.0" endY="-67.0" layoutX="173.0" layoutY="202.0" startX="143.0" startY="-67.0" />
+                        <Line endX="-106.0" endY="104.0" layoutX="173.0" layoutY="202.0" startX="28.0" startY="104.0" />
+                        <Line endX="-116.5" endY="93.5" layoutX="183.0" layoutY="212.0" startX="-116.5" startY="-46.0" />
+                        <Line endX="262.5" endY="94.5" layoutX="183.0" layoutY="212.0" startX="262.5" startY="-45.0" />
+                        <Line endX="262.0" endY="94.0" layoutX="183.0" layoutY="212.0" startX="133.0" startY="94.0" />
+                     </children>
+                  </Pane>
+                  <TextArea fx:id="messagesTextArea" editable="false" prefHeight="375.0" prefWidth="709.0" style="-fx-text-fill: #00ff00; -fx-control-inner-background: black;" wrapText="true">
+                     <font>
+                        <Font name="Courier New" size="16.0" />
+                     </font>
+                  </TextArea>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+   <bottom>
+      <VBox spacing="8.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="0.0" />
+         </padding>
+         <children>
             <HBox spacing="8.0">
-                <TextField fx:id="messageTextField" onAction="#handleMessageAction" promptText="Escribe un mensaje" HBox.hgrow="ALWAYS" />
-                <Button fx:id="sendButton" onAction="#handleSendButton" text="Enviar" />
+               <children>
+                  <TextField fx:id="messageTextField" onAction="#handleMessageAction" promptText="Escribe un mensaje" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="sendButton" onAction="#handleSendButton" text="Enviar" />
+               </children>
             </HBox>
-        </VBox>
-    </bottom>
+         </children>
+      </VBox>
+   </bottom>
 </BorderPane>
