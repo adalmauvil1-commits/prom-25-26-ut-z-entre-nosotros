@@ -22,7 +22,7 @@
             <HBox spacing="8.0">
                <children>
                   <Label text="IP" />
-                  <TextField fx:id="hostTextField" text="172.20.22.49" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="hostTextField" text="172.20.22.100" HBox.hgrow="ALWAYS" />
                   <Label text="Puerto" />
                   <TextField fx:id="portTextField" prefWidth="90.0" text="12345" />
                   <Label text="Nombre" />

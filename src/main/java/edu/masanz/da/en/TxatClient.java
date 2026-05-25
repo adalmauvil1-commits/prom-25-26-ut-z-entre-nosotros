@@ -15,8 +15,7 @@ public class TxatClient extends Application {
         Scene scene = new Scene(loader.load(), 1073, 528);
         stage.setTitle("Txat v7");
         stage.setScene(scene);
-        stage.setMinWidth(1073);
-        stage.setMinHeight(528);
+        stage.setResizable(false);
         stage.show();
     }
 

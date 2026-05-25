@@ -1,6 +1,5 @@
 package edu.masanz.da.en;
 
-import java.util.Comparator;
 import java.util.Objects;
 
 public class Jugador implements Comparable<Jugador> {
@@ -9,6 +8,7 @@ public class Jugador implements Comparable<Jugador> {
     private boolean impostor;
     private boolean vivo;
     private Sala sala;
+    private boolean ready;
 
     public Jugador(String nombre) {
         this.nombre = nombre;
@@ -49,19 +49,28 @@ public class Jugador implements Comparable<Jugador> {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
-        Jugador jugador = (Jugador) object;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Jugador jugador = (Jugador) o;
         return Objects.equals(nombre, jugador.nombre);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nombre, impostor, vivo, sala);
+        return Objects.hash(nombre);
     }
+
 
     @Override
     public int compareTo(Jugador other) {
         return this.nombre.compareTo(other.nombre);
+    }
+
+    public void setReady(boolean b) {
+        this.ready = b;
+    }
+
+    public boolean isReady() {
+        return ready;
     }
 }

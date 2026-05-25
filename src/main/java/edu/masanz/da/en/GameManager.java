@@ -11,10 +11,12 @@ public class GameManager {
     private Map<String, Sala> mapSalas =  new TreeMap<>();
     private Map<String, Jugador> mapJugadores =  new TreeMap<>();
     private Map<Sala, List<Jugador>> mapSalasListaJugadores =  new TreeMap<>();
-    // MAPA QUIEN VOTA A QUIEN PARA MATAR
-    private Map<Jugador, Jugador> mapVotos = new TreeMap<>();
+    private Map<Sala, List<Tarea>> mapSalasListaTareas =  new TreeMap<>();
 
-    private EstadoJuego estadoJuego = EstadoJuego.JUGANDO;
+    private Map<Jugador, Jugador> mapVotos = new TreeMap<>();
+    private EstadoJuego estadoJuego = EstadoJuego.ESPERANDO;
+
+    private Map<Jugador, Boolean> mapJugadorReady = new TreeMap<>();
 
     private String mapaTextual = """
 [cocina] - [pasillo] - [dormitorio]
@@ -25,6 +27,19 @@ public class GameManager {
     private GameManager() {
         initMapSalas();
         initMapSalasListaJugadores();
+        initMapSalasListaTareas();
+    }
+
+    private void initMapSalasListaTareas() {
+        mapSalasListaTareas.put(mapSalas.get("cocina"), new ArrayList<>());
+        mapSalasListaTareas.put(mapSalas.get("pasillo"), new ArrayList<>());
+        mapSalasListaTareas.put(mapSalas.get("dormitorio"), new ArrayList<>());
+        mapSalasListaTareas.put(mapSalas.get("despensa"), new ArrayList<>());
+
+        mapSalasListaTareas.get(mapSalas.get("cocina")).add(new Tarea("cafetera"));
+        mapSalasListaTareas.get(mapSalas.get("despensa")).add(new Tarea("oxígeno"));
+        mapSalasListaTareas.get(mapSalas.get("dormitorio")).add(new Tarea("calefacción"));
+        mapSalasListaTareas.get(mapSalas.get("dormitorio")).add(new Tarea("trituradora"));
     }
 
     private void initMapSalas() {
@@ -72,10 +87,10 @@ public class GameManager {
     public Jugador addJugador(String clientName) {
 
         Jugador jugador = new Jugador(clientName);
-
-        if (Math.random() < 0.3) {
-            jugador.setImpostor(true);
-        }
+//
+//        if (Math.random() < 0.3) {
+//            jugador.setImpostor(true);
+//        }
 
         // Meterlo en el mapa jugadores
         mapJugadores.put(clientName, jugador);
@@ -93,13 +108,13 @@ public class GameManager {
         return jugador;
     }
 
-    public void removeJugador(String clientName) {
-        Jugador jugador = mapJugadores.get(clientName);
-        if (jugador == null){
+    public void removeJugador(String nombreJugador) {
+        Jugador jugador = mapJugadores.get(nombreJugador);
+        if(jugador == null){
             return;
         }
-        mapJugadores.remove(clientName);
-        mapSalasListaJugadores.remove(jugador.getSala()).remove(jugador);
+        mapJugadores.remove(nombreJugador);
+        mapSalasListaJugadores.get(jugador.getSala()).remove(jugador);
         mapVotos.remove(jugador);
     }
 
@@ -112,6 +127,7 @@ public class GameManager {
         Jugador jugador = mapJugadores.get(nombreJugador);
         // Si está muerto --> false
         if (jugador == null) { return false; }
+        if (!jugador.isVivo()) { return false; }
         Sala salaDestino = mapSalas.get(nombreSalaDestino);
         // Si la sala no existe --> false
         if (salaDestino == null) { return false; }
@@ -135,6 +151,10 @@ public class GameManager {
 
     public Map<Sala, List<Jugador>> getMapSalasListaJugadores() {
         return mapSalasListaJugadores;
+    }
+
+    public Map<Sala, List<Tarea>> getMapSalasListaTareas() {
+        return mapSalasListaTareas;
     }
 
     public boolean kill(String nombreAsesino, String nombreObjetivo) {
@@ -169,6 +189,31 @@ public class GameManager {
         return true;
     }
 
+    public boolean arreglaTarea(String nombreJugador, String nombreTarea) {
+        Jugador jugador = mapJugadores.get(nombreJugador);
+        if(jugador == null || nombreTarea == null || nombreTarea.isEmpty()){
+            return false;
+        }
+        if(!jugador.isVivo() || jugador.isImpostor()){
+            return false;
+        }
+        List<Tarea> listaTareas = mapSalasListaTareas.get(jugador.getSala());
+        if(listaTareas == null || listaTareas.isEmpty()){
+            return false;
+        }
+        for (Tarea tarea : listaTareas) {
+            if(tarea.getNombre().equalsIgnoreCase(nombreTarea)){
+                if(tarea.isFunciona()){
+                    return false;
+                }
+                tarea.setFunciona(true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public boolean vote(String nombreJugador, String nombreObjetivo) {
         Jugador jugador = mapJugadores.get(nombreJugador);
         Jugador objetivo = mapJugadores.get(nombreObjetivo);
@@ -197,13 +242,13 @@ public class GameManager {
     public Jugador resultadoVotacion() {
         Map<Jugador, Integer> votosPorJugador = new HashMap<>();
 
-        for (Jugador objetvio : mapVotos.values()) {
-            Integer numVotos = votosPorJugador.get(objetvio);
+        for (Jugador objetivo : mapVotos.values()) {
+            Integer numVotos = votosPorJugador.get(objetivo);
             if (numVotos == null){
                 numVotos = 0;
             }
             numVotos = numVotos + 1;
-            votosPorJugador.put(objetvio, numVotos);
+            votosPorJugador.put(objetivo, numVotos);
         }
 
         Jugador jugadorConMasVotos = null;
@@ -211,46 +256,40 @@ public class GameManager {
         for (Map.Entry<Jugador, Integer> entry : votosPorJugador.entrySet()) {
             Jugador jugador = entry.getKey();
             int votos = entry.getValue();
-            if (numVotosMax < votos){
+            if(numVotosMax<votos){
                 jugadorConMasVotos = jugador;
                 numVotosMax = votos;
             }
         }
-        //TODO: implementar correctamente los votos
+        // TODO: implementar regla correcta de numero de votos necesarios
         jugadorConMasVotos.setVivo(false);
-
         actualizarEstadoJuego();
-
         return jugadorConMasVotos;
     }
 
     public void actualizarEstadoJuego() {
-        if (estadoJuego != EstadoJuego.REUNION){
+
+        if(estadoJuego == EstadoJuego.REUNION && !votacionFinalizada()){
             return;
+        }else if(estadoJuego == EstadoJuego.REUNION){
+            reubicarJugadores();
         }
-        if (estadoJuego == EstadoJuego.REUNION && !votacionFinalizada()){
-            return;
-        }
-        int impostores = 0;
-        int tripulantes = 0;
+
+        int numImpostores = 0;
+        int numNoImpostores = 0;
         for (Jugador jugador : mapJugadores.values()) {
-            if (jugador.isVivo()){
-                if (jugador.isImpostor()){
-                    impostores++;
-                }else {
-                    tripulantes++;
-                }
+            if(jugador.isVivo() && jugador.isImpostor()){
+                numImpostores++;
+            } else if(jugador.isVivo() && !jugador.isImpostor()){
+                numNoImpostores++;
             }
         }
-        if (impostores >= tripulantes){
-            estadoJuego = EstadoJuego.GANAN_IMPOSTORES;
-        }else if (impostores == 0){
+        if(numImpostores == 0){
             estadoJuego = EstadoJuego.GANAN_TRIPULANTES;
-        }else{
+        } else if (numImpostores >= numNoImpostores) {
+            estadoJuego = EstadoJuego.GANAN_IMPOSTORES;
+        } else {
             estadoJuego = EstadoJuego.JUGANDO;
-        }
-        if (estadoJuego == EstadoJuego.JUGANDO){
-            reubicarJugadores();
         }
     }
 
@@ -268,5 +307,72 @@ public class GameManager {
         return estadoJuego;
     }
 
+    public List<Jugador> getJugadores() {
+        return new ArrayList<>(mapJugadores.values());
+    }
 
+    public void killJugador(String nombreJugador) {
+        mapJugadores.get(nombreJugador).setVivo(false);
+    }
+
+    public List<Tarea> getTareasDeSala(Sala sala) {
+        return mapSalasListaTareas.get(sala);
+    }
+
+    public List<Jugador> getJugadores(Sala sala) {
+        return mapSalasListaJugadores.get(sala);
+    }
+
+
+    public void setJugadorReady(String clientName) {
+        mapJugadores.get(clientName).setReady(true); // Opción 1
+        // Comprobar si todos están READY
+        for (Jugador jugador : mapJugadores.values()) {
+            if (!jugador.isReady()) {
+                return;
+            }
+        }
+        estadoJuego = EstadoJuego.JUGANDO;
+        // Definir intrusos
+        int numImpostores = (int) Math.ceil(mapJugadores.size() * 0.2);
+        // TODO: setJugadorReady
+        List<Jugador> jugadores = new ArrayList<>();
+        jugadores.addAll(mapJugadores.values());
+        Collections.shuffle(jugadores);
+        for (int i = 0; i < numImpostores; i++) {
+            jugadores.get(i).setImpostor(true);
+        }
+    }
+
+    public boolean esImpostor(String nombreJugador) {
+        Jugador jugador = mapJugadores.get(nombreJugador);
+        if (jugador == null){
+            return false;
+        }
+        return jugador.isImpostor();
+    }
+
+    public boolean destrozarTarea(String nombreJugador, String nombreTarea) {
+        Jugador jugador = mapJugadores.get(nombreJugador);
+        if(jugador == null || nombreTarea == null || nombreTarea.isEmpty()){
+            return false;
+        }
+        if(!jugador.isVivo() && !jugador.isImpostor()){
+            return false;
+        }
+        List<Tarea> listaTareas = mapSalasListaTareas.get(jugador.getSala());
+        if(listaTareas == null || listaTareas.isEmpty()){
+            return false;
+        }
+        for (Tarea tarea : listaTareas) {
+            if(tarea.getNombre().equalsIgnoreCase(nombreTarea)){
+                if(tarea.isFunciona() && jugador.isImpostor()){
+                    tarea.setFunciona(false);
+                    return true;
+                };
+                return false;
+            }
+        }
+        return false;
+    }
 }
